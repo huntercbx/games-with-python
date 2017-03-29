@@ -10,6 +10,8 @@ FPS = 60
 # путь к изображениям
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, "images")
+snd_folder = os.path.join(game_folder, "sound")
+music_folder = os.path.join(game_folder, "music")
 
 # класс для корабля игрока
 class PlayerShip(pygame.sprite.Sprite):
@@ -81,6 +83,7 @@ class Laser(pygame.sprite.Sprite):
         self.rect.centery = y
         self.speedx = 10
         self.speedy = 0
+        laser_sound.play()
 
     def update(self):
         self.rect.left += self.speedx
@@ -101,6 +104,7 @@ class Explosion(pygame.sprite.Sprite):
         self.rect.centery = y
         self.index = 0
         self.last_shot = pygame.time.get_ticks()
+        explosion_sound.play()
 
 
     def update(self):
@@ -114,6 +118,7 @@ class Explosion(pygame.sprite.Sprite):
 
 # инициализация библиотеки pygame
 pygame.init()
+pygame.mixer.init(buffer=256)
 
 # создание объекта для отслеживания времени
 clock = pygame.time.Clock()
@@ -135,6 +140,12 @@ for i in range(1,9):
 background = pygame.image.load(os.path.join(img_folder, "background.png")).convert()
 background_rect = background.get_rect()
 
+laser_sound = pygame.mixer.Sound(os.path.join(snd_folder, "laser.wav"))
+explosion_sound = pygame.mixer.Sound(os.path.join(snd_folder, "explosion.wav"))
+
+pygame.mixer.music.load(os.path.join(music_folder, "main_theme.ogg"))
+pygame.mixer.music.set_volume(0.3)
+
 # все спрайты будут храниться здесь
 sprites = pygame.sprite.Group()
 meteors = pygame.sprite.Group()
@@ -148,6 +159,8 @@ meteors.add(meteor)
 meteor = Meteor(WIDTH - 100, 200)
 sprites.add(meteor)
 meteors.add(meteor)
+
+pygame.mixer.music.play()
 
 # цикл событий
 running = True
